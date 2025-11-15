@@ -46,11 +46,14 @@ export const authAPI = {
 }
 
 export const relevamientosAPI = {
-  getAll: () => api.get('/relevamientos'),
+  getAll: (params) => api.get('/relevamientos', { params }),
   getById: (id) => api.get(`/relevamientos/${id}`),
   create: (data) => api.post('/relevamientos', data),
   update: (id, data) => api.put(`/relevamientos/${id}`, data),
-  delete: (id) => api.delete(`/relevamientos/${id}`)
+  delete: (id) => api.delete(`/relevamientos/${id}`),
+  updateEstado: (id, estado) => api.patch(`/relevamientos/${id}/estado`, { estado }),
+  getStats: () => api.get('/relevamientos/stats'),
+  getVersionHistory: (id) => api.get(`/relevamientos/${id}/versions`)
 }
 
 export const presupuestosAPI = {

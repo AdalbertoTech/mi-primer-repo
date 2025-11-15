@@ -5,6 +5,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import Relevamientos from './pages/Relevamientos'
+import NuevoRelevamiento from './pages/NuevoRelevamiento'
 import { setupServiceWorker, setupNetworkDetection } from './services/registerSW'
 import syncService from './services/syncService'
 
@@ -48,6 +50,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/relevamientos"
+            element={
+              <ProtectedRoute>
+                <Relevamientos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/relevamientos/nuevo"
+            element={
+              <ProtectedRoute>
+                <NuevoRelevamiento />
               </ProtectedRoute>
             }
           />

@@ -50,7 +50,7 @@ const Dashboard = () => {
             <p className="text-gray-600 text-sm mb-4">
               Crear un nuevo relevamiento técnico en campo
             </p>
-            <Button fullWidth variant="outline">
+            <Button fullWidth variant="outline" onClick={() => navigate('/relevamientos/nuevo')}>
               Crear Relevamiento
             </Button>
           </div>
@@ -66,7 +66,7 @@ const Dashboard = () => {
             <p className="text-gray-600 text-sm mb-4">
               Ver todos los relevamientos realizados
             </p>
-            <Button fullWidth variant="outline">
+            <Button fullWidth variant="outline" onClick={() => navigate('/relevamientos')}>
               Ver Relevamientos
             </Button>
           </div>
@@ -82,8 +82,8 @@ const Dashboard = () => {
             <p className="text-gray-600 text-sm mb-4">
               Gestionar presupuestos de trabajos
             </p>
-            <Button fullWidth variant="outline">
-              Ver Presupuestos
+            <Button fullWidth variant="outline" disabled>
+              Próximamente
             </Button>
           </div>
         </div>
