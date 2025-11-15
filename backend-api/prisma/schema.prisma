@@ -1,0 +1,100 @@
+// Prisma Schema para Refrigeración Pro
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Técnicos
+model Tecnico {
+  id            Int            @id @default(autoincrement())
+  nombre        String
+  email         String         @unique
+  telefono      String?
+  passwordHash  String         @map("password_hash")
+  activo        Boolean        @default(true)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  // Relaciones
+  relevamientos Relevamiento[]
+
+  @@map("tecnicos")
+}
+
+// Modelo de Relevamientos con versionado
+model Relevamiento {
+  id              Int       @id @default(autoincrement())
+  version         Int       @default(1)
+  tecnicoId       Int       @map("tecnico_id")
+  clienteNombre   String    @map("cliente_nombre")
+  clienteTelefono String    @map("cliente_telefono")
+  clienteDireccion String   @map("cliente_direccion")
+  latitud         Decimal?  @db.Decimal(10, 8)
+  longitud        Decimal?  @db.Decimal(11, 8)
+  tipoTrabajo     String    @map("tipo_trabajo") // 'instalacion', 'mantenimiento', 'reparacion'
+  estado          String    @default("borrador") // 'borrador', 'presupuestado', 'completado'
+  notas           String?   @db.Text
+  fotosUrls       Json?     @map("fotos_urls") // Array de URLs de Cloudinary
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  syncedAt        DateTime? @map("synced_at")
+  isLatest        Boolean   @default(true) @map("is_latest")
+
+  // Relaciones
+  tecnico       Tecnico        @relation(fields: [tecnicoId], references: [id], onDelete: Cascade)
+  presupuestos  Presupuesto[]
+  reportes      Reporte[]
+
+  @@index([tecnicoId, estado])
+  @@index([isLatest])
+  @@map("relevamientos")
+}
+
+// Modelo de Presupuestos con versionado
+model Presupuesto {
+  id              Int       @id @default(autoincrement())
+  version         Int       @default(1)
+  relevamientoId  Int       @map("relevamiento_id")
+  items           Json      // Array de {descripcion, cantidad, precioUnitario}
+  subtotal        Decimal   @db.Decimal(10, 2)
+  impuestos       Decimal   @db.Decimal(10, 2)
+  total           Decimal   @db.Decimal(10, 2)
+  validezDias     Int       @default(30) @map("validez_dias")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  isLatest        Boolean   @default(true) @map("is_latest")
+
+  // Relaciones
+  relevamiento  Relevamiento @relation(fields: [relevamientoId], references: [id], onDelete: Cascade)
+  reportes      Reporte[]
+
+  @@index([relevamientoId])
+  @@index([isLatest])
+  @@map("presupuestos")
+}
+
+// Modelo de Reportes Finales
+model Reporte {
+  id                Int       @id @default(autoincrement())
+  relevamientoId    Int       @map("relevamiento_id")
+  presupuestoId     Int?      @map("presupuesto_id")
+  trabajoRealizado  String    @db.Text @map("trabajo_realizado")
+  materialesUsados  Json?     @map("materiales_usados") // Array de materiales
+  fotosFinalUrls    Json?     @map("fotos_final_urls") // Array de URLs
+  observaciones     String?   @db.Text
+  pdfUrl            String?   @map("pdf_url")
+  fechaCompletado   DateTime  @map("fecha_completado")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relaciones
+  relevamiento  Relevamiento  @relation(fields: [relevamientoId], references: [id], onDelete: Cascade)
+  presupuesto   Presupuesto?  @relation(fields: [presupuestoId], references: [id], onDelete: SetNull)
+
+  @@index([relevamientoId])
+  @@map("reportes")
+}
