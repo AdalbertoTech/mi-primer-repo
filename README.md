@@ -196,16 +196,34 @@ npm run prisma:studio    # Abrir Prisma Studio (GUI)
 npm run prisma:generate  # Generar cliente Prisma
 ```
 
+## 🚀 Quick Start
+
+```bash
+# Instalar todas las dependencias
+npm run install:all
+
+# Configurar base de datos
+npm run setup:db
+
+# Ejecutar backend y frontend en paralelo
+npm run dev
+```
+
+Ver [SETUP.md](./SETUP.md) para instrucciones detalladas.
+
 ## 🎯 Roadmap
 
 ### Versión 1.0 (Actual) - MVP
 - [x] Estructura base del proyecto
-- [ ] Autenticación de técnicos
-- [ ] CRUD de relevamientos
+- [x] Autenticación de técnicos
+- [x] CRUD de relevamientos
+- [x] Funcionalidad offline completa
+- [x] Captura y compresión de fotos
+- [x] Geolocalización
+- [x] Sincronización automática offline→online
+- [x] Dashboard con estadísticas en tiempo real
 - [ ] Generación de presupuestos
-- [ ] Generación de reportes finales
-- [ ] Funcionalidad offline completa
-- [ ] Captura y compresión de fotos
+- [ ] Generación de reportes finales con PDF
 
 ### Versión 2.0 (Futura)
 - [ ] Gestión centralizada de clientes (CRM)
