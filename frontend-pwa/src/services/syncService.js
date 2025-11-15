@@ -64,17 +64,32 @@ class SyncService {
   // Sincronizar un relevamiento específico
   async syncRelevamiento(relev) {
     try {
+      // Mapear campos de snake_case a camelCase para el backend
+      const relevamientoData = {
+        clienteNombre: relev.cliente_nombre,
+        clienteTelefono: relev.cliente_telefono,
+        clienteDireccion: relev.cliente_direccion,
+        tipoTrabajo: relev.tipo_trabajo,
+        notas: relev.notas,
+        latitud: relev.latitud ? parseFloat(relev.latitud) : undefined,
+        longitud: relev.longitud ? parseFloat(relev.longitud) : undefined,
+        fotosUrls: relev.fotos_urls || []
+      }
+
       if (relev.id) {
         // Actualizar existente
-        await relevamientosAPI.update(relev.id, relev)
+        await relevamientosAPI.update(relev.id, relevamientoData)
+        await db.relevamientos.update(relev.localId, { is_synced: 1 })
       } else {
         // Crear nuevo
-        const response = await relevamientosAPI.create(relev)
-        await dbHelpers.markAsSynced('relevamientos', relev.localId, response.data.id)
+        const response = await relevamientosAPI.create(relevamientoData)
+        await dbHelpers.markAsSynced('relevamientos', relev.localId, response.data.data.id)
       }
+
+      console.log('✓ Relevamiento sincronizado:', relev.cliente_nombre)
     } catch (error) {
       console.error('Error sincronizando relevamiento:', error)
-      throw error
+      // No lanzar error para que continúe con los demás
     }
   }
 

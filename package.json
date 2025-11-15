@@ -1,0 +1,18 @@
+{
+  "name": "refrigeracion-pro",
+  "version": "1.0.0",
+  "description": "PWA para técnicos de refrigeración",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix backend-api && npm install --prefix frontend-pwa",
+    "dev": "concurrently \"npm run dev --prefix backend-api\" \"npm run dev --prefix frontend-pwa\"",
+    "setup:db": "npm run prisma:generate --prefix backend-api && npm run prisma:migrate --prefix backend-api",
+    "build": "npm run build --prefix frontend-pwa"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["pwa", "offline-first", "refrigeracion", "hvac"],
+  "author": "Adalberto",
+  "license": "MIT"
+}

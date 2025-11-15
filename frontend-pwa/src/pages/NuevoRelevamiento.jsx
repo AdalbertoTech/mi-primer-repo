@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import db from '../db/database'
+import { useAuthStore } from '../store/authStore'
+import syncService from '../services/syncService'
 import Input from '../components/Input'
 import Select from '../components/Select'
 import Textarea from '../components/Textarea'
@@ -32,6 +34,7 @@ const TIPOS_TRABAJO = [
 
 const NuevoRelevamiento = () => {
   const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
   const [photos, setPhotos] = useState([])
   const [location, setLocation] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -54,8 +57,12 @@ const NuevoRelevamiento = () => {
     try {
       // Preparar datos del relevamiento
       const relevamientoData = {
-        ...data,
-        tecnico_id: 1, // TODO: Obtener del store de auth
+        cliente_nombre: data.clienteNombre,
+        cliente_telefono: data.clienteTelefono,
+        cliente_direccion: data.clienteDireccion,
+        tipo_trabajo: data.tipoTrabajo,
+        notas: data.notas || null,
+        tecnico_id: user?.id || 1,
         estado: 'borrador',
         latitud: location?.latitude || null,
         longitud: location?.longitude || null,
@@ -71,10 +78,20 @@ const NuevoRelevamiento = () => {
 
       setSuccess('Relevamiento guardado exitosamente')
 
-      // Redirigir después de 1 segundo
+      // Intentar sincronizar inmediatamente si hay conexión
+      if (navigator.onLine) {
+        console.log('Intentando sincronizar...')
+        setTimeout(() => {
+          syncService.syncAll().catch(err => {
+            console.error('Error en sincronización automática:', err)
+          })
+        }, 500)
+      }
+
+      // Redirigir después de 1.5 segundos
       setTimeout(() => {
         navigate('/relevamientos')
-      }, 1000)
+      }, 1500)
     } catch (err) {
       console.error('Error guardando relevamiento:', err)
       setError('Error al guardar el relevamiento')
