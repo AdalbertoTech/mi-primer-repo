@@ -49,13 +49,15 @@ app.get('/api', (req, res) => {
   })
 })
 
-// TODO: Importar rutas cuando se implementen
-// import authRoutes from './routes/auth.routes.js'
+// Importar rutas
+import authRoutes from './routes/auth.routes.js'
+// TODO: Implementar en siguientes fases
 // import relevamientosRoutes from './routes/relevamientos.routes.js'
 // import presupuestosRoutes from './routes/presupuestos.routes.js'
 // import reportesRoutes from './routes/reportes.routes.js'
 
-// app.use('/api/auth', authRoutes)
+// Rutas
+app.use('/api/auth', authRoutes)
 // app.use('/api/relevamientos', relevamientosRoutes)
 // app.use('/api/presupuestos', presupuestosRoutes)
 // app.use('/api/reportes', reportesRoutes)

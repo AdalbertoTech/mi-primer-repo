@@ -1,17 +1,72 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-
-// Placeholder components - se implementarán en fases posteriores
-const Login = () => <div className="flex items-center justify-center h-full"><h1 className="text-2xl">Login - Por implementar</h1></div>
-const Dashboard = () => <div className="flex items-center justify-center h-full"><h1 className="text-2xl">Dashboard - Por implementar</h1></div>
+import { useEffect } from 'react'
+import { useAuthStore } from './store/authStore'
+import ProtectedRoute from './components/ProtectedRoute'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import { setupServiceWorker, setupNetworkDetection } from './services/registerSW'
+import syncService from './services/syncService'
 
 function App() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+
+  useEffect(() => {
+    // Registrar Service Worker para PWA
+    setupServiceWorker()
+
+    // Setup detección de red (online/offline)
+    setupNetworkDetection()
+
+    // Setup sincronización automática si está autenticado
+    if (isAuthenticated) {
+      syncService.setupAutoSync()
+    }
+  }, [isAuthenticated])
+
   return (
     <Router>
       <div className="h-full">
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Rutas públicas */}
+          <Route
+            path="/login"
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
+            }
+          />
+
+          {/* Rutas protegidas */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Ruta por defecto */}
+          <Route
+            path="/"
+            element={
+              <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />
+            }
+          />
+
+          {/* 404 - Redirigir a login o dashboard */}
+          <Route
+            path="*"
+            element={
+              <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />
+            }
+          />
         </Routes>
       </div>
     </Router>

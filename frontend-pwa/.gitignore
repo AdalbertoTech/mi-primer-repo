@@ -1,0 +1,9 @@
+node_modules
+.env
+.env.local
+dist
+dev-dist
+*.log
+.DS_Store
+sw.js
+workbox-*.js
